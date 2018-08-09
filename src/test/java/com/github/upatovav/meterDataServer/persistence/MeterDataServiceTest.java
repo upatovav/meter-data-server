@@ -4,8 +4,6 @@ import com.github.upatovav.meterDataServer.controllers.MeterDataDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
@@ -17,7 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration
@@ -54,14 +53,16 @@ public class MeterDataServiceTest {
         MeterDataDto dto = MeterDataDto.builder()
                 .coldWater(new BigDecimal(100))
                 .hotWater(new BigDecimal(101))
-                .electricity(new BigDecimal(10234))
+                .gas(new BigDecimal(10234))
                 .build();
+        //retrieve [absent] data
         meterDataService.getMeterData(userId);
         meterDataService.getLastMeterDataForUser(userId);
         //repository called once
         verify(meterDataRepositoryMock).findAllByUserId(userId);
         verify(meterDataRepositoryMock).findFirstByUserIdOrderByDateDesc(userId);
 
+        //retrieve data once again
         meterDataService.getMeterData(userId);
         meterDataService.getLastMeterDataForUser(userId);
         //repository still called once
@@ -75,7 +76,7 @@ public class MeterDataServiceTest {
         meterDataService.getMeterData(userId);
         meterDataService.getLastMeterDataForUser(userId);
 
-        //repository called twice
+        //repository called twice, so cache evicted after saving data
         verify(meterDataRepositoryMock, times(2)).findAllByUserId(userId);
         verify(meterDataRepositoryMock, times(2)).findFirstByUserIdOrderByDateDesc(userId);
     }

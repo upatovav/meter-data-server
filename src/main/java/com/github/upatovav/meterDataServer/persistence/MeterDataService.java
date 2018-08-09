@@ -13,10 +13,9 @@ import java.util.Optional;
 @Service
 public class MeterDataService {
 
-    //TODO add caching
     private final MeterData.MeterDataRepository meterDataRepository;
 
-    public MeterDataService(MeterData.MeterDataRepository meterDataRepository){
+    MeterDataService(MeterData.MeterDataRepository meterDataRepository){
         this.meterDataRepository = meterDataRepository;
     }
 

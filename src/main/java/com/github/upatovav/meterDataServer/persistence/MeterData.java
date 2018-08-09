@@ -30,35 +30,26 @@ public class MeterData {
     private ZonedDateTime date;
 
     @Column
-//    @NotNull
-//    @Min(value = 0)
     private BigDecimal coldWater;
 
     @Column
-//    @NotNull
-//    @Min(value = 0)
     private BigDecimal hotWater;
 
     @Column
-//    @NotNull
-//    @Min(value = 0)
-    private BigDecimal electricity;
+    private BigDecimal gas;
 
-    public MeterData(long userId,
+    MeterData(long userId,
                      ZonedDateTime date,
                      MeterDataDto dto){
         this.userId = userId;
         this.date = date;
         this.coldWater = dto.getColdWater();
         this.hotWater = dto.getHotWater();
-        this.electricity = dto.getElectricity();
+        this.gas = dto.getGas();
     }
 
     interface MeterDataRepository extends JpaRepository<MeterData, Long> {
-
         List<MeterData> findAllByUserId(long userId);
-
         Optional<MeterData> findFirstByUserIdOrderByDateDesc(long userId);
-        //Nothing special
     }
 }
